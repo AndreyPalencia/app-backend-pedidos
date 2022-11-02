@@ -17,7 +17,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Persona} from '../models';
+import {Persona} from '../models/persona.model';
 import {PersonaRepository} from '../repositories';
 
 export class PersonaController {
