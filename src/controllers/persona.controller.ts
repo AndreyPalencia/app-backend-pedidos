@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -17,13 +18,18 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import fetch from 'node-fetch';
+import { Llaves } from '../config/llaves';
 import {Persona} from '../models/persona.model';
 import {PersonaRepository} from '../repositories';
+import { AutentificacionService } from '../services';
 
 export class PersonaController {
   constructor(
     @repository(PersonaRepository)
     public personaRepository : PersonaRepository,
+    @service(AutentificacionService)
+    public autentificacionService : AutentificacionService
   ) {}
 
   @post('/personas')
@@ -44,7 +50,22 @@ export class PersonaController {
     })
     persona: Omit<Persona, 'id'>,
   ): Promise<Persona> {
-    return this.personaRepository.create(persona);
+    //Genar Clave 
+    let clave = this.autentificacionService.GeneradorClave();
+    let claveCifrada = this.autentificacionService.CifraClave(clave);
+    persona.clave = claveCifrada;
+    let p = await this.personaRepository.create(persona);
+    
+    //Notificar por sms al usuario la clave generada
+    let mensaje = 'Pedidos LoopBack: Le da la "Bienvenidad" se a creado su cuenta con en Sistema '
+    + persona.nombre + "Tu Nombre de Usuario es : " + persona.correo + "Tu clave es: " + persona.clave;
+    let telefono = '3015652567';
+    fetch(Llaves.urlServicioNotificaciones+'/sms?mensaje=' + mensaje + '&telefono=' + telefono)
+    .then((data: any ) => {
+      console.log(data);
+    });
+    return p;
+
   }
 
   @get('/personas/count')
