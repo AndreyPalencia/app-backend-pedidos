@@ -55,7 +55,16 @@ export class PersonaController {
     let claveCifrada = this.autentificacionService.CifraClave(clave);
     persona.clave = claveCifrada;
     let p = await this.personaRepository.create(persona);
-    
+    //Notificar por correo al usuario la clave generada
+    let destino = persona.correo;
+    let asunto = 'Registro En la Plataforma Pedidos LoopBack';
+    let contenido = `Pedidos LoopBack: Le da la "Bienvenidad" se a creado su cuenta con en Sistema
+     ${persona.nombre}, ${persona.apellido} Tu Nombre de Usuario es : ${persona.correo}, 
+     Tu clave es: ${persona.clave} `;
+    fetch(`${Llaves.urlServicioNotificaciones}+'/correo-electronico?destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+    .then((data: any ) => {
+      console.log(data);
+    });
     //Notificar por sms al usuario la clave generada
     let mensaje = 'Pedidos LoopBack: Le da la "Bienvenidad" se a creado su cuenta con en Sistema '
     + persona.nombre + "Tu Nombre de Usuario es : " + persona.correo + "Tu clave es: " + persona.clave;
