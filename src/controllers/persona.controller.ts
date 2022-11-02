@@ -60,16 +60,17 @@ export class PersonaController {
     let asunto = 'Registro En la Plataforma Pedidos LoopBack';
     let contenido = `Pedidos LoopBack: Le da la "Bienvenidad" se a creado su cuenta con en Sistema
      ${persona.nombre}, ${persona.apellido} Tu Nombre de Usuario es : ${persona.correo}, 
-     Tu clave es: ${persona.clave} `;
-    fetch(`${Llaves.urlServicioNotificaciones}+'/correo-electronico?destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+     Tu clave es: ${clave} `;
+    fetch(`${Llaves.urlServicioNotificaciones}correo-electronico?destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
     .then((data: any ) => {
       console.log(data);
     });
-    //Notificar por sms al usuario la clave generada
+    //Notificar por sms al usuario la clave generada 
+    //No funciona el sms
     let mensaje = 'Pedidos LoopBack: Le da la "Bienvenidad" se a creado su cuenta con en Sistema '
     + persona.nombre + "Tu Nombre de Usuario es : " + persona.correo + "Tu clave es: " + persona.clave;
     let telefono = '3015652567';
-    fetch(Llaves.urlServicioNotificaciones+'/sms?mensaje=' + mensaje + '&telefono=' + telefono)
+    fetch(`${Llaves.urlServicioNotificaciones}sms?mensaje=${mensaje}&telefono=${telefono}`)
     .then((data: any ) => {
       console.log(data);
     });

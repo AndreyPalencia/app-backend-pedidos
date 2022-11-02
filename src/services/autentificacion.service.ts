@@ -4,7 +4,7 @@ import { PedidoRepository, PersonaRepository } from '../repositories';
 
 const generador = require('password-generator');
 const cryptojs = require('crypto-js');
-const jwt = require('')
+///const jwt = require('')
 @injectable({scope: BindingScope.TRANSIENT})
 export class AutentificacionService {
   constructor(
