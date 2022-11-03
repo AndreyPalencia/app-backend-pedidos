@@ -56,7 +56,7 @@ export class PersonaController {
         tk : token
       }
     }else{
-      throw new HttpErrors[401]('Credenciales incorrectas');
+      throw new HttpErrors[401]('Credenciales incorrectas ');
     }
   }
 
@@ -87,7 +87,7 @@ export class PersonaController {
     //Notificar por correo al usuario la clave generada
     let destino = persona.correo;
     let asunto = 'Registro En la Plataforma Pedidos LoopBack';
-    let contenido = `Pedidos LoopBack: Le da la "Bienvenidad" se a creado su cuenta con en Sistema
+    let contenido = `Pedidos LoopBack: Le da la "Bienvenidad", se ha creado su cuenta en Sistema tu nombre y Apellido Registrados son: 
      ${persona.nombre}, ${persona.apellido} Tu Nombre de Usuario es : ${persona.correo}, 
      Tu clave es: ${clave} `;
     fetch(`${Llaves.urlServicioNotificaciones}correo-electronico?destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
