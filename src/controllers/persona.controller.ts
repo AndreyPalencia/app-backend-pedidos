@@ -17,9 +17,11 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import fetch from 'node-fetch';
 import { Llaves } from '../config/llaves';
+import { Credenciales } from '../models/credenciales.model';
 import {Persona} from '../models/persona.model';
 import {PersonaRepository} from '../repositories';
 import { AutentificacionService } from '../services';
@@ -31,6 +33,33 @@ export class PersonaController {
     @service(AutentificacionService)
     public autentificacionService : AutentificacionService
   ) {}
+
+  @post('/validarPersona',
+  {
+    responses: {
+      '200': { description : "Identificación correcta" }
+    }
+  })
+  async identificarPersona(
+    @requestBody() credenciales : Credenciales
+  )
+  {
+    let p = await this.autentificacionService.IdentificarPersona(credenciales.usuario,credenciales.clave);
+    if(p){
+      let token = this.autentificacionService.GenerarTokenJWT(p);
+      return {
+        datos : {
+          nombre : p.nombre + '' + p.apellido,
+          correo : p.correo,
+          id : p.id
+        },
+        tk : token
+      }
+    }else{
+      throw new HttpErrors[401]('Credenciales incorrectas');
+    }
+  }
+
 
   @post('/personas')
   @response(200, {

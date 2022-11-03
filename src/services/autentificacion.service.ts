@@ -1,14 +1,17 @@
 import {injectable, /* inject, */ BindingScope} from '@loopback/core';
 import { repository } from '@loopback/repository';
+import { Llaves } from '../config/llaves';
+import { Persona } from '../models';
 import { PedidoRepository, PersonaRepository } from '../repositories';
 
 const generador = require('password-generator');
 const cryptojs = require('crypto-js');
-///const jwt = require('')
+const jwt = require('jsonwebtoken');
+
 @injectable({scope: BindingScope.TRANSIENT})
 export class AutentificacionService {
   constructor(
-    @repository(PedidoRepository)
+    @repository(PersonaRepository)
     public personaRepositorio: PersonaRepository
   ) {}
 
@@ -27,7 +30,7 @@ export class AutentificacionService {
   }
 
 
-  IdentificacionPersona(usuario:string, clave: string)
+  IdentificarPersona(usuario : string, clave : string)
   {
     try{
       let p = this.personaRepositorio.findOne({
@@ -45,6 +48,26 @@ export class AutentificacionService {
     }
   }
 
+  GenerarTokenJWT(persona : Persona)
+  {
+    let token = jwt.sign({
+      data : {
+        id : persona.id,
+        correo : persona.correo,
+        nombre : persona.nombre + '' + persona.apellido
+      }
+    }, Llaves.claveJWT);
+    return token;
+  }
 
+  ValidarToken(token:string)
+  {
+    try{
+      let decoded = jwt.verify(token, Llaves.claveJWT)
+      return decoded;
+    }catch{
+      return false;
+    }
+  }
   
 }
